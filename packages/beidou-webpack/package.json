@@ -1,5 +1,5 @@
 {
-  "name": "yx-beidou-webpack",
+  "name": "@tiger/beidou-webpack",
   "version": "2.3.0",
   "description": "beidou webpack middleware",
   "eggPlugin": {
