@@ -8,7 +8,9 @@ const fs = require('fs');
 const path = require('path');
 const builder = require('../lib/builder');
 
-const { target, framework, dev } = argv;
+const { target, framework, dev, entry } = argv;
+
+console.log('[tt]beidou-webpack build, argv:', target, framework, dev, entry)
 
 const { Application } = require(framework);
 const Loader = require(framework).AppWorkerLoader;
@@ -48,7 +50,11 @@ if (target && !['node', 'browser'].includes(target)) {
 }
 
 console.info(`Target is ${target}`);
-const compiler = builder(app, target);
+let options = {}
+if (entry) {
+  options.entry = entry
+}
+const compiler = builder(app, target, options);
 
 compiler.run((err, stats) => {
   if (err) {
