@@ -10,7 +10,7 @@ module.exports = (app, target = 'browser', options) => {
   if (options.entry) {
     let oEntrys = webpackConfig.entry
     Object.keys(oEntrys).forEach((item) => {
-      if (options.entry !== entry) {
+      if (options.entry !== item) {
         delete oEntrys[item]
       }
     })
