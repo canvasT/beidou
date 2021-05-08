@@ -23,6 +23,7 @@ function setPolyfill(window) {
     removeListener() {},
   });
   window.matchMedia = global.matchMedia;
+  global.top = window.top;
 }
 
 exports.basicPolyfill = () => {
