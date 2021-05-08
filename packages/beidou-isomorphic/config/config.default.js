@@ -3,7 +3,7 @@
 const path = require('path');
 
 module.exports = appInfo => ({
-  isomorphic: {
+  opusIsomorphic: {
     /**
      * JSDom polyfill, simulate browser environment in server
      * true by default

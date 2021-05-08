@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const debug = require('debug')('beidou:isomorphic:register');
+const debug = require('debug')('beidou:opusIsomorphic:register');
 
 module.exports = (options) => {
   debug(options);

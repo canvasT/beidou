@@ -4,7 +4,7 @@ const { basicPolyfill, setGlobal } = require('./lib/polyfill');
 const isomorphic = require('./lib/isomorphic');
 
 module.exports = (app) => {
-  const config = app.config.isomorphic;
+  const config = app.config.opusIsomorphic;
   // set global variables
   setGlobal(app.config.env || /* istanbul ignore next */ app.loader.serverEnv);
 

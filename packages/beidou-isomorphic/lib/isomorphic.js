@@ -40,7 +40,7 @@ function isValidExt(ext) {
 }
 
 module.exports = function (app) {
-  const { isomorphic, baseDir } = app.config;
+  const { opusIsomorphic: isomorphic, baseDir } = app.config;
   const { logger } = app;
   const { alias } = isomorphic;
 
