@@ -23,7 +23,7 @@ const reservedKey = 'custom';
  * @returns
  */
 exports.common = (options) => {
-  const { appConfig, dev, webpackFactory } = options
+  const { appConfig, dev, webpackFactory, entry } = options
   const webpackConfig = appConfig.webpack;
   const viewConfig = appConfig.view;
   const { output } = webpackConfig;

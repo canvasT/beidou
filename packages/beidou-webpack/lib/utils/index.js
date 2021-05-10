@@ -107,8 +107,9 @@ const getWebpackConfig = (options) => {
   );
 
   const entry = {
-    [options.entry]: path.resolve(client, `./${options.entry}index.jsx`)
+    [options.entry]: path.resolve(client, `./${options.entry}/index.jsx`)
   }
+  options.entry = entry
 
   webpackConfig = require(defaultConfigPath)(options);
   webpackConfig.entry = entry
