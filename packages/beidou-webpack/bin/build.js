@@ -21,7 +21,7 @@ const builder = require('../lib/builder');
 */
 const { entry, appConfig } = argv;
 
-appConfig = JSON.parse(appConfig)
+appConfig = JSON.parse(decodeURIComponent(appConfig))
 
 const compiler = builder({
   target: 'browser',

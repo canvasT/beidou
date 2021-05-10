@@ -97,17 +97,17 @@ function parseDevFromArgv() {
 
 const getWebpackConfig = (options) => {
   const { appConfig } = options;
-  let viewConfig = appConfig.view
+  let client = appConfig.client
   let webpackConfig = null;
-  let webpackFactory = new WebpackFactory();
-  Object.getPrototypeOf(webpackFactory).init();
+  options.webpackFactory = new WebpackFactory();
+  Object.getPrototypeOf(options.webpackFactory).init();
   const defaultConfigPath = path.join(
     __dirname,
     `../../config/webpack/webpack.browser.js`
   );
 
   const entry = {
-    [options.entry]: path.resolve(viewConfig.root, `./${entry}index.jsx`)
+    [options.entry]: path.resolve(client, `./${options.entry}index.jsx`)
   }
 
   webpackConfig = require(defaultConfigPath)(options);
