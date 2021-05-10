@@ -15,13 +15,28 @@ const {
   MiniCssExtractPlugin,
 } = require('./utils');
 
-module.exports = (app, entry, dev) => {
-  const { pkg } = app.config;
-  const factory = app.webpackFactory;
-  const typescript = pkg && pkg.config && pkg.config.typescript;
-  const viewConfig = app.config.view;
-  const { custom } = app.config.webpack;
-  common(app, entry, dev);
+/**
+ *
+ * @param {*} options
+ * {
+ *  appConfig: {
+ *    view: {},
+ *    webpack: {},
+ *    baseDir: '',
+ *    isomorphic: {}
+ *  },
+ *  webpackFactory: {},
+ *  dev: false,
+ * }
+ * @returns
+ */
+
+module.exports = (options) => {
+  let { appConfig, dev } = options;
+  const factory = options.webpackFactory;
+  const viewConfig = appConfig.view;
+  const { custom } = appConfig.webpack;
+  common(options);
 
   [
     {
@@ -32,7 +47,7 @@ module.exports = (app, entry, dev) => {
         options: {
           babelrc: true,
           presets: [
-            [require.resolve('babel-preset-beidou-client'), { typescript }],
+            [require.resolve('babel-preset-beidou-client'), { typescript: undefined }],
           ],
           // This is a feature of `babel-loader` for webpack (not Babel itself).
           // It enables caching results in ./node_modules/.cache/babel-loader/

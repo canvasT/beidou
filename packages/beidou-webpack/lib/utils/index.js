@@ -95,82 +95,29 @@ function parseDevFromArgv() {
   }
 }
 
-const getWebpackConfig = (app, options = {}, target = 'browser') => {
-  const loadFile = app.loader.loadFile.bind(app.loader);
-  // argv passed from master process, JSON string
-  const isDev = parseDevFromArgv();
-
-  options.devServer.hot = isDev;
-  const depth =
-    options.custom && options.custom.depth ? options.custom.depth : 1;
-
+const getWebpackConfig = (options) => {
+  const { appConfig } = options;
+  let viewConfig = appConfig.view
   let webpackConfig = null;
-  app.webpackFactory = new WebpackFactory();
-  Object.getPrototypeOf(app.webpackFactory).init();
+  let webpackFactory = new WebpackFactory();
+  Object.getPrototypeOf(webpackFactory).init();
   const defaultConfigPath = path.join(
     __dirname,
-    `../../config/webpack/webpack.${target}.js`
+    `../../config/webpack/webpack.browser.js`
   );
 
-  // make sure the port assigned is available
-  let defaultPort = 6002;
-  const serverPort = options.devServer.port;
-  if (serverPort) {
-    defaultPort = serverPort;
+  const entry = {
+    [options.entry]: path.resolve(viewConfig.root, `./${entry}index.jsx`)
   }
 
-  defaultPort = getAvaliablePort(defaultPort, app);
-  if (serverPort) {
-    options.devServer.port = defaultPort;
-  }
-
-  const entry = entryLoader(app, options.devServer, isDev, depth);
-  debug('entry auto load as below:\n%o', entry);
-
-  webpackConfig = loadFile(defaultConfigPath, app, entry, isDev);
-  const customConfigPath = getCustomWebpackCfgPath(app);
-  // custom config exists
-  if (customConfigPath) {
-    debug('Custom config found at %s', customConfigPath);
-    webpackConfig = loadFile(
-      customConfigPath,
-      app,
-      webpackConfig,
-      isDev,
-      target
-    );
-  }
-  // make sure devServer is provided
-  if (!webpackConfig.devServer) {
-    webpackConfig.devServer = {
-      contentBase: false,
-    };
-  }
-
-  const { devServer } = webpackConfig;
-  if (!devServer.port) {
-    devServer.port = defaultPort;
-  }
-
-  if (devServer.contentBase !== false) {
-    app.logger.warn(
-      '[webpack] devServer.contentBase: %s, if ' +
-        'webpack.devServer.contentBase is not false may cause beidou' +
-        ' server unreachable',
-      devServer.contentBase
-    );
-    devServer.contentBase = false;
-  }
-
-  if (!devServer.publicPath) {
-    devServer.publicPath = webpackConfig.output.publicPath || '/build';
-  }
+  webpackConfig = require(defaultConfigPath)(options);
+  webpackConfig.entry = entry
 
   return webpackConfig;
 };
 
-const injectPlugin = (app) => {
-  app.IsomorphicPlugin = IsomorphicPlugin;
+const injectPlugin = (options) => {
+  options.IsomorphicPlugin = IsomorphicPlugin;
 };
 
 const printEntry = function (entry) {

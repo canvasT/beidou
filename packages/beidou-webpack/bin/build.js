@@ -8,53 +8,27 @@ const fs = require('fs');
 const path = require('path');
 const builder = require('../lib/builder');
 
-const { target, framework, dev, entry } = argv;
+/*
+{
+  entry: 'act_xxx',
+  appConfig: {
+    webpack: {},
+    view: {},
+    isomorphic: {}
+    baseDir
+  }
+}
+*/
+const { entry, appConfig } = argv;
 
-console.log('[tt]beidou-webpack build, argv:', target, framework, dev, entry)
+appConfig = JSON.parse(appConfig)
 
-const { Application } = require(framework);
-const Loader = require(framework).AppWorkerLoader;
-
-// set serverEnv=local to ensure webpack plugin enable
-process.env.EGG_SERVER_ENV = 'local';
-
-Loader.prototype.load = function () {};
-
-const app = new Application({
-  baseDir: process.cwd(),
-  workers: 1,
+const compiler = builder({
+  target: 'browser',
+  entry,
+  appConfig,
+  dev: false
 });
-
-const originEnv = app.config.env;
-
-// webpack build only works in local environment
-// force env to local and reload config
-if (originEnv !== 'local') {
-  app.loader.serverEnv = 'local';
-  app.loader.dirs = null;
-  app.config.env = 'local';
-  app.loader.loadConfig();
-  // restore
-  app.loader.serverEnv = originEnv;
-  app.config.env = originEnv;
-}
-
-// build in production environment as default
-app.config.env = dev ? 'local' : 'prod';
-
-if (target && !['node', 'browser'].includes(target)) {
-  console.error(
-    `Expect target to be "node" or "browser"(default), got ${target}`
-  );
-  process.exit(1);
-}
-
-console.info(`Target is ${target}`);
-let options = {}
-if (entry) {
-  options.entry = entry
-}
-const compiler = builder(app, target, options);
 
 compiler.run((err, stats) => {
   if (err) {
@@ -72,5 +46,4 @@ compiler.run((err, stats) => {
   }
 
   console.log('\nBuild finished\n');
-  app.close();
 });

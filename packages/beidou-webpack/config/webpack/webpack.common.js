@@ -6,12 +6,29 @@ const path = require('path');
 
 const reservedKey = 'custom';
 
-exports.common = (app, entry, dev) => {
-  const webpackConfig = app.config.webpack;
-  const viewConfig = app.config.view;
+/**
+ *
+ * @param {*} options
+ * {
+ *  appConfig: {
+ *    view: {},
+ *    webpack: {},
+ *    baseDir: '',
+ *    isomorphic: {}
+ *  },
+ *  webpackFactory: {},
+ *  IsomorphicPlugin: object
+ *  dev: false
+ * }
+ * @returns
+ */
+exports.common = (options) => {
+  const { appConfig, dev, webpackFactory } = options
+  const webpackConfig = appConfig.webpack;
+  const viewConfig = appConfig.view;
   const { output } = webpackConfig;
   if (!path.isAbsolute(output.path)) {
-    output.path = path.join(app.baseDir, output.path);
+    output.path = path.join(appConfig.baseDir, output.path);
   }
   if (!dev && viewConfig.useHashAsset) {
     output.filename = '[name]_[chunkhash:8].js';
@@ -23,10 +40,10 @@ exports.common = (app, entry, dev) => {
     strictExportPresence: true,
   };
 
-  app.webpackFactory.definePlugin(app.IsomorphicPlugin);
-  const { universal } = app.config.isomorphic;
+  webpackFactory.definePlugin(options.IsomorphicPlugin);
+  const { universal } = appConfig.isomorphic;
   if (universal) {
-    app.webpackFactory.addPlugin(app.IsomorphicPlugin, universal);
+    webpackFactory.addPlugin(options.IsomorphicPlugin, universal);
   }
 
   let finalConfig = {};
@@ -40,13 +57,13 @@ exports.common = (app, entry, dev) => {
     ...finalConfig,
     bail: !dev,
     devtool: dev ? 'eval-source-map' : false,
-    context: app.config.baseDir,
+    context: appConfig.baseDir,
     entry,
     output,
     module,
   };
 
-  app.webpackFactory.reset(finalConfig);
+  webpackFactory.reset(finalConfig);
 };
 
 exports.reservedKey = reservedKey;

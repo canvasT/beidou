@@ -3,20 +3,35 @@
 const webpack = require('webpack');
 const helper = require('../utils');
 
-module.exports = (app, target = 'browser', options) => {
-  helper.injectPlugin(app);
-  const config = app.config.webpack;
-  const webpackConfig = helper.getWebpackConfig(app, config, target);
-  if (options.entry) {
-    let oEntrys = webpackConfig.entry
-    Object.keys(oEntrys).forEach((item) => {
-      if (options.entry !== item) {
-        delete oEntrys[item]
-      }
-    })
-  }
-
-  console.log('[tt]beidou-webpack builder, webpackConfig:', webpackConfig)
+/**
+ *
+ * @param {*} options
+ * {
+ *  appConfig: {
+ *    view: {},
+ *    webpack: {},
+ *    baseDir: '',
+ *    isomorphic: {}
+ *  },
+ *  entry: xx,
+ *  dev: false,
+ * }
+ * @returns
+ */
+module.exports = (options) => {
+  // let {
+  //   entry,
+  // } = options
+  helper.injectPlugin(options);
+  const webpackConfig = helper.getWebpackConfig(options);
+  // if (entry) {
+  //   let oEntrys = webpackConfig.entry
+  //   Object.keys(oEntrys).forEach((item) => {
+  //     if (entry !== item) {
+  //       delete oEntrys[item]
+  //     }
+  //   })
+  // }
 
   const compiler = webpack(webpackConfig);
   return compiler;
